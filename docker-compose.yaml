@@ -1,6 +1,7 @@
 
 version: '3'
-
+volumes:
+    prometheus_data: {}
 services:
   pihome:
     image: pihome
