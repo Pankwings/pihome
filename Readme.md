@@ -7,7 +7,9 @@ I have some experience in working with [Prometheus](https://prometheus.io/) and 
 By deploying this project with all its components, you'll be able to track these metrics:
 - Room temperature
 - Humidity
-- Connected network devices (Removed)
+- Movement
+- Nearby bluetooth devices
+- Connected network devices
 
 ## Hardware components
 
@@ -15,18 +17,24 @@ These are all the component, I used in my project:
 - [Raspberry Pi 3 Model B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b/)
 - 16 GB microSD card
 - [DHT11 Temperature And Humidity Sensor](https://components101.com/dht11-temperature-sensor)
+- [Motion Sensor HC-SR501](https://components101.com/hc-sr501-pir-sensor)
 - Mobile phone charger, for powering Raspberry Pi
 
 ## Connecting DHT11 Sensor to Raspberry Pi
 
-I connected Ground pin to the Ground of Raspberry PI, Data Pin to GPIO 4 pin, Vcc pin to 3.3V power supply pin.
+I connected Ground pin to the Ground of Raspberry PI, Data Pin to GPIO 14 pin, Vcc pin to 3.3V power supply pin.
 
+## Connecting HC-SR501 Sensor to Raspberry Pi
+
+I connected Ground pin to the Ground of Raspberry PI, Data Pin to GPIO 17 pin, Vcc pin to 5V power supply pin.
 
 ## Reading sensor data
 
 For reading DHT11 sensor data and feeding it to Prometheus, I chose [DHT11_Python](https://github.com/szazo/DHT11_Python) library, which is quite unstable, and sometimes does not return valid results, so you might get some gaps in your graphs.
+For HC-SR501, I wrote simple python code myself.
 You can browse source code of this project, for more details:
     - `application/temperature.py` & `application/dht11.py` for temperature & humidity readings;
+    - `application/motion.py` for motion sensor;
     - `application/webapp.py` for prometheus endpoint.
 
 
@@ -62,19 +70,18 @@ It is also possible to add Grafana dashboards to provisioning folder as json fil
 To make everything portable and easy to install, I packed my Flask API to Docker image and configured all services in `docker-compose.yaml`.
 To deploy whole stack you have to add `.env` file with some configuration properties:
 ```
-HOST_IP=192.168.1.100
-NETWORK_TO_SCAN=192.168.0.0/24
-GRAFANA_PASSWORD=yourpassword
-ADMIN_USER="admin"  #for caddy basic auth
-ADMIN_PASSWORD_HASH="JDJhJDE0JC82VVpaUk9nR3hMQ2FtOXprdVJ4c2VNUXJhYjh5YWR3bmJOMHR2SUNTSE5ZVVNCU1pXaEFh"  #generated hash password of "admin". Type "admin" in the password if using this hash.
+HOST_IP=192.168.1.216
+NETWORK_TO_SCAN=192.168.1.0/24
+GRAFANA_PASSWORD=pihome
 ```
 
 After adding `.env`, file run `docker-compose build` & `docker-compose up -d`.
 
 ## Result
 
+![](dashboard.png)
 
 ## Usefull resources
-- https://github.com/pdambrauskas/pihome
+
 - https://www.freva.com/2019/05/21/hc-sr501-pir-motion-sensor-on-raspberry-pi/
 - https://github.com/szazo/DHT11_Python
