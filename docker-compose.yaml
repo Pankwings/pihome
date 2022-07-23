@@ -7,12 +7,14 @@ services:
     image: pihome
     build: .
     restart: always
-    network_mode: host
+    #    network_mode: host
     devices:
       - "/dev/mem:/dev/mem"
     privileged: true
-    ports:
-      - 5000:5000
+    expose:
+      - 5000
+        #    ports:
+        #      - 5000:5000
     environment:
       - NETWORK_TO_SCAN=${NETWORK_TO_SCAN}
  
@@ -30,8 +32,10 @@ services:
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
       - '--web.enable-lifecycle'       
-    ports:
-      - 9090:9090
+        #    ports:
+        #      - 9090:9090
+    expose:
+      - 9090            
     extra_hosts:
       - pihome:${HOST_IP}
     depends_on:
@@ -42,10 +46,31 @@ services:
     image: grafana/grafana:8.3.1
     depends_on:
       - prometheus
-    ports:
-      - 80:3000
+    expose:
+      - 3000            
+        #    ports:
+        #      - 80:3000
     volumes:
       - ./grafana/:/etc/grafana/
     restart: always
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+            
+  caddy:
+    image: caddy:2.3.0
+    container_name: caddy
+    depends_on:
+      - grafana
+    ports:
+      - "80:3000"
+      - "9090:9090"
+      - "5000:5000"
+    volumes:
+      - ./caddy:/etc/caddy
+    env_file:
+       ./.env    
+    environment:
+      - ADMIN_USER=${ADMIN_USER}
+     #- ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH}
+    restart: unless-stopped              
