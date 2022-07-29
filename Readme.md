@@ -62,8 +62,6 @@ It is also possible to add Grafana dashboards to provisioning folder as json fil
 To make everything portable and easy to install, I packed my Flask API to Docker image and configured all services in `docker-compose.yaml`.
 To deploy whole stack you have to add `.env` file with some configuration properties:
 ```
-HOST_IP=192.168.1.100
-NETWORK_TO_SCAN=192.168.0.0/24
 GRAFANA_PASSWORD=yourpassword
 ADMIN_USER="admin"  #for caddy basic auth
 ADMIN_PASSWORD_HASH="JDJhJDE0JC82VVpaUk9nR3hMQ2FtOXprdVJ4c2VNUXJhYjh5YWR3bmJOMHR2SUNTSE5ZVVNCU1pXaEFh"  #generated hash password of "admin". Type "admin" in the password if using this hash.
