@@ -1,26 +1,27 @@
 
 version: '3'
+
+
 volumes:
     prometheus_data: {}
+
 services:
   pihome:
     image: pihome
     build: .
     restart: always
-    #    network_mode: host
     devices:
       - "/dev/mem:/dev/mem"
     privileged: true
     expose:
       - 5000
-        #    ports:
-        #      - 5000:5000
-    environment:
-      - NETWORK_TO_SCAN=${NETWORK_TO_SCAN}
+    #    ports:
+    #      - 5000:5000
+    #    environment:
+    #      - NETWORK_TO_SCAN=${NETWORK_TO_SCAN}
  
   prometheus:
     image: prom/prometheus:v2.36.1
-    user: root
     volumes:
       - ./prometheus/:/etc/prometheus/
       #- /var/prometheus:/prometheus
@@ -36,8 +37,6 @@ services:
         #      - 9090:9090
     expose:
       - 9090            
-    extra_hosts:
-      - pihome:${HOST_IP}
     depends_on:
       - pihome
     restart: always
@@ -64,7 +63,6 @@ services:
     ports:
       - "80:3000"
       - "9090:9090"
-      - "5000:5000"
     volumes:
       - ./caddy:/etc/caddy
     env_file:

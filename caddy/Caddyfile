@@ -5,14 +5,6 @@
     reverse_proxy prometheus:9090
 }
 
-:5000 {
-    basicauth /* {
-        {$ADMIN_USER} {$ADMIN_PASSWORD_HASH}
-    }
-    reverse_proxy pihome:5000
-}
-
-
 :3000 {
     reverse_proxy grafana:3000
 }
